@@ -25,6 +25,9 @@ do
     awk '{print $0"\n\t\t-- '"$1"'\n%"}' >> $UNDERSCORED
 done
 
+# Remove all html BR tags.
+sed -i 's/<br \/>/ /g' $UNDERSCORED
+
 # Make the .dat file/db needed by the fortune program.
 # Last step is to move both new files to /usr/share/games/fortunes
 strfile $UNDERSCORED
