@@ -10,7 +10,7 @@ do
     awk '{print $0"\n\t\t-- Morrissey\n%"}' >> morrissey
 done
 
-# Make the george_carlin.dat file/db needed by the fortune program.
+# Make the morrissey.dat file/db needed by the fortune program.
 # Last step is to move both new files to /usr/share/games/fortunes
 strfile morrissey
 

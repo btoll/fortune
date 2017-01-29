@@ -10,7 +10,7 @@ do
     awk '{print $0"\n\t\t-- Kurt Vonnegut\n%"}' >> kurt_vonnegut
 done
 
-# Make the george_carlin.dat file/db needed by the fortune program.
+# Make the kurt_vonnegut.dat file/db needed by the fortune program.
 # Last step is to move both new files to /usr/share/games/fortunes
 strfile kurt_vonnegut
 

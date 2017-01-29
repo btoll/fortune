@@ -10,7 +10,7 @@ do
     awk '{print $0"\n\t\t-- Malcolm X\n%"}' >> malcolm_x
 done
 
-# Make the george_carlin.dat file/db needed by the fortune program.
+# Make the malcolm_x.dat file/db needed by the fortune program.
 # Last step is to move both new files to /usr/share/games/fortunes
 strfile malcolm_x
 
