@@ -43,3 +43,125 @@ Relying too heavily on external variables is fraught with peril since it leads t
 The type of an object determines the set of values it can have and what operations can be performed on it.
 		-- K & R, 2nd Edition, ch 2, p 35
 %
+Names are made up of letters and digits; the first character must be a letter...[d]on't begin variables names with underscore, however, since library routines often use such names...[t]raditional C practice is to use lower case for variable names, and all upper case for symbolic constants.
+		-- K & R, 2nd Edition, ch 2, p 35
+%
+At least the first 31 characters of an internal name are significant.  For function names and external variables, the number may be less than 31, because external names may be used by assemblers and loaders over which the language has no control.  For external names, the standard guarantees uniqueness only for 6 characters and a single case.
+		-- K & R, 2nd Edition, ch 2, p 35
+%
+There are only a few basic data types in C:
+
+	char	a single byte, capable of holding one character
+		in the local character set.
+	int	an integer, typically reflecting the natural size
+		of integers on the host machine.
+	float	single-precision floating point.
+	double	double-precision floating point.
+
+In addition, there are a number of qualifiers that can be applied to these basic types.  `short` and `long` apply to integers:
+
+	short int sh;
+	long int counter;
+
+The word `int` can be omitted in such declarations, and typically is.
+	-- K & R, 2nd Edition, ch 2, p 36
+%
+Each compiler is free to choose appropriate sizes [of integers] for its own hardware, subject only to the restriction that `short`s and `int`s are at least 16 bits, `long`s are at least 32 bits, and `short` is no longer than `int`, which is no longer than `long`.
+		-- K & R, 2nd Edition, ch 2, p 35
+%
+The qualifer `signed` or `unsigned` may be applied to `char` or any integer.  `unsigned` numbers are always positive or zero, and obey the laws of arithmetic modulo 2^n, where `n` is the number of bits in the type.  So, for instance, if `chars` are 8 bits, `unsigned char` variables have values between 0 and 255, while `signed chars` have values between -128 and 127 (int a two's-complement machine).  Whether plain `chars` are signed or unsigned is machine-dependent, but printable characters are always positive.
+		-- K & R, 2nd Edition, ch 2, p 36
+%
+An integer constant like 1234 is an `int`.  A long constant is written with a terminal `l` (ell) or `L`, as in 123456789L; an integer too big to fit into an `int` will also be taken as a `long`.  Unsigned constants are written with a terminal `u` or `U`, and the suffix `ul` or `UL` indicates `signed long`.
+		-- K & R, 2nd Edition, ch 2, p 37
+%
+Floating-point constants contain a decimal point (123.4) or an exponent (1e-2) or both; their type is `double`, unless suffixed.  The suffixes `f` or `F` indicate a `float` constant; `l` or `L` indicate a `long double`.
+		-- K & R, 2nd Edition, ch2, p 37
+%
+The value of an integer can be specified in octal or hexadecimal instead of decimal.  A leading zero (0) on an integer constant means octal; a leading 0x or 0X means hexadecimal...Octal and hexadecimal constants may also be followed by `L` to make them `long` and `U` to make them unsigned (ed. note - i.e., 0XFUL).
+		-- K & R, 2nd Edition, ch 2, p 37
+%
+A character constant is an integer, written as one character within single quotes, such as 'x'.  The value of a character constant is the numeric value of the character in the machine's character set.  For example, in the ASCII character set the character constant '0' has the value 48, which is unrelated to the numeric value 0.
+		-- K & R, 2nd Edition, ch 2, p 37
+%
+Certain characters can be represented in character and string constants by escape sequences like \n (newline); these sequences look like two characters, but represent only one.  In addition, an arbitrary byte-sized bit pattern can be specified by
+
+	'\ooo'
+
+where `ooo` is one to three octal digits (0...7) or by
+
+	'\xhh'
+
+where `hh` is one or more hexadecimal digits (0...9, a...f, A...F).  So we might write
+
+	#define VTAB '\013'	/* ASCII vertical tab */
+	#define BELL '\007'	/* ASCII bell character */
+
+or, in hexadecimal,
+
+	#define VTAB '\xb'	/* ASCII vertical tab */
+	#define BELL '\x7'	/* ASCII bell character */
+		-- K & R, 2nd Edition, ch 2, p 37-38
+%
+The character constant '\0' represents the character with value zero, the null character.  '\0' is often written instead of 0 to emphasize the character nature of some expressio but the numeric value is just 0.
+		-- K & R, 2nd Editionk, ch 2, p 38
+%
+String constants can be concatenated at compile time:
+
+	"hello," " world"
+
+is equivalent to
+
+	"hello, world"
+
+This is useful for splitting long strings across several source lines.
+		-- K & R, 2nd Edition, ch 2, p 38
+%
+Technically, a string constant is an array of characters.  The internal representation of a string has a null character '\0' at the end, so the physical storage required is one more than the number of characters written between the quotes.  This representation means that there is no limit to how long a string can be[.]
+		-- K & R, 2nd Edition, ch 2, p 38
+%
+There is one other kind of constant, the enumeration constant.  An enumeration is a list of constant integer values, as in
+
+	enum boolean { NO, YES };
+
+The first name in an `enum` has value 0, the next 1, and so on, unless explicit values are specified.  If not all values are specified, unspecified values continue the progression from the last specified value...Names in different enumerations must be distinct.  Values need not be distinct in the same enumeration.
+		-- K & R, 2nd Edition, ch 2, p 39
+%
+Enumerations provide a convenient way to associate constant values with names, an alternative to `#define` with the advantage that the values can be generated for you.  Although variables of `enum` types may be declared, compilers need not check that what you store in such a variable is a valid value for the enumeration.  Nevertheless, enumeration variables offer the chance of checking and so are often better then `#define`s.  In addition, a debugger may be able to print values of enumeration variables in their symbolic form.
+		-- K & R, 2nd Edition, ch 2, p 39
+%
+External and static variables are initialized to zero by default.  Automatic variables for which there is no explicit initializer have undefined (i.e., garbage) values.
+		-- K & R, 2nd Edition, ch 2, p 40
+%
+The qualifier `const` can be applied to the declaration of any variable to specify that its value will not be changed.  For an array, the `const` qualifier says that the elements will not be altered...The `const` declaration can also be used with array arguments, to indicate that the function does not change the array:
+
+    int strlen(const char[]);
+		-- K & R, 2nd Edition, ch 2, p 40
+%
+The binary + and - operators have the same precedence, which is lower than the precedence of *, /, and %, which is in turn lower than unary + and -.  Arithmetic operators associate left to right.
+		-- K & R, 2nd Edition, ch 2, p 41
+%
+The relational operators are
+
+	>	>=	<	<=
+
+They all have the same precedence.  Just below them in precedence are the equality operators:
+
+	==	!=
+
+Relational operators have lower precedence than arithmetic operators, so an expression like `i < lim-1` is taken as `i < (lim-1)`, as would be expected.
+		-- K & R, 2nd Edition, ch 2, p 41
+%
+The precedence of && is higher than ||, and both are lower than relational and equality operators, so expressions like
+
+	i<lim-1 && (c = getchar()) != '\n' && c != EOF
+
+need no extra parentheses.
+		-- K & R, 2nd Edition, ch 2, p 42
+%
+By definition, the numeric value of a relational or logical expression is 1 if the relation is true, and 0 if the relation is false.
+		-- K & R, 2nd Edition, ch 2, p 42
+%
+The unary negation operator ! converts a non-zero operand into 0, and a zero operand into a 1.
+		-- K & R, 2nd Edition, ch 2, p 42
+%
