@@ -1,0 +1,42 @@
+The model of input and output supported by the standard library is very simple.  Text input or output, regardless of where it originates or where it goes to, is dealt with as streams of characters.  A text stream is a sequence of characters divided into lines; each line consists of zero or more characters followed by a newline character.  It is the responsibility of the library to make each input or output stream conform to this model; the C programmer using the library need not worry about how lines are represented outside of the program.
+        -- K & R, 2nd, Edition, chapter 1, page 15
+%
+The body of this for loop is empty, because all of the work is done in the test and increment parts.  But the grammatical rules of C require that a for statement have a body.  The isolated semicolon, called a `null statement`, is there to satisfy that requirement.  We put it on a separate line to make it visible.
+		-- K & R, 2nd Edition, chapter 1, page 19
+%
+A character written between single quotes represents an integer value equal to the numerical value of the character in the machine's character set.  This is called a `character constant`, although it is just another way to write a small integer.
+		-- K & R, 2nd Edition, chapter 1, page 19
+%
+By definition, chars are just small integers, so char variables and constants are identical to ints in arithmetic expressions.
+        -- K & R, 2nd Edition, chapter 1, page 23
+%
+We will generally use `parameter` for a variable named in the parenthesized list in a function definition, and `argument` for the value used in a call of the function.  The terms `formal argument` and `actual argument` are sometimes used for the same distinction.
+		-- K & R, 2nd Edition, chapter 1, page 25
+%
+[P]rograms should return status to their environment.
+		-- K & R, 2nd Edition, chapter 1, page 26
+%
+Well-chosen names are good documentation.
+		-- K & R, 2nd Edition, chapter 1, page 26
+%
+In C, all function arguments are passed "by value."  This means that the called function is given the values of its arguments in temporary variables rather than the originals...[T]he called function cannot directly alter a variable in the calling function; it can only alter its private, temporary copy.
+		-- K & R, 2nd Edition, chapter 1, page 27
+%
+When the name of an array is used as an argument, the value passed to the function is the location or address of the beginning of the array -- there is no copying of array elements.  By subscripting this value, the function can access and alter any element of the array.
+		-- K & R, 2nd Edition, chapter 1, page 28
+%
+The purpose of supplying the size of an array in a declaration is to set aside storage.
+		-- K & R, 2nd Edition, chapter 1, page 30
+%
+Each local variable in a function comes into existence only when the function is called, and disappears when the function is exited.  This is why such variables are known as `automatic` variables, following terminology in other languages.  We will use the term automatic henceforth to refer to these local variables.
+		-- K & R, 2nd Edition, chapter 1, page 31
+%
+[C]ommon practice is to place definitions of all external variables at the beginning of the source file, and then omit all `extern` declarations.
+		-- K & R, 2nd Edition, chapter 1, page 33
+%
+If the program is in several source files, and a variable is defined in `file1` and used in `file2` and `file3`, then `extern` declarations are needed in `file2` and `fil` to connect the occurrences of the variable.  The usual practice is to collect `extern` declarations of variables and functions is a separate file, historically called a `header`, that is included by `#include` at the beginning of each source file.  The suffix `.h` is conventional for header names.
+		-- K & R, 2nd Edition, chapter 1, page 33
+%
+Relying too heavily on external variables is fraught with peril since it leads to programs whose data connections are not at all obvious -- variables can be changed in unexpected and even inadvertent ways, and the program is hard to modify.
+		-- K & R, 2nd Edition, chapter 1, page 34
+%
