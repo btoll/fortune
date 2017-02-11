@@ -242,3 +242,34 @@ Declaring the argument `x` to be `unsigned` ensures that when it is right-shifte
 [A]n assignment operator may even help a compiler to produce efficient code.
 		-- K & R, 2nd Edition, ch 2, p 51
 %
+[T]the type of an assignment expression is the type of its left operand, and the value is the value after assignment.
+		-- K & R, 2nd Edition, ch 2, p 51
+%
+The conditional expression, written with the ternary operator "?:", provides an alternate way to write [an if/else block] and similar constructions.
+		-- K & R, 2nd Edition, ch 2, p 51
+%
+Parentheses are not necessary around the first expression of a conditional expression, since the precedence of ?: is very low, just above assignment.  They are advisable anyway, however, since they make the condition part of the expression easier to see.
+		-- K & R, 2nd Edition, ch 2, p 52
+%
+C, like most languages, does not specify the order in which the operands of an operator are evaluated. (The exceptions are &&, ||, ?:, and ','.)
+		-- K & R, 2nd Edition ch 2, p 52
+%
+[T]he order in which function arguments are evaluated is not specified, so the statement
+
+	printf("%d %d\n", ++n, power(2, n));	/* WRONG */
+
+can produce different results with different compilers, depending on whether `n` is incremented before `power` is called.  The solution, of course, is to write
+
+	++n;
+	printf("%d %d\n", n, power(2, n));
+		-- K & R, 2nd Edition, ch 2, p 53
+%
+Function calls, nested assignment statements, and increment and decrement operators cause "side effects" -- some variable is changed as a by-product of the evaluation of an expression.  In any expression involving side effects, there can be subtle dependencies on the order in which variables taking part in the expression are updated.
+		-- K & R, 2nd Edition, ch 2, p 53
+%
+Compilers can interpret [the order in which expressions are evaluated] in different ways, and generate different answers depending on their interpretation.  The standard intentionally leaves most such matters unspecified.  When side effects (aignment to variables) take place within an expression is left to the discretion of the compiler, since the best order depends strongly on machine architecture.
+		-- K & R, 2nd Edition, ch 2, p 54
+%
+The moral is that writing code that depends on order of evaluation is a bad programming practice in any language.  Naturally, it is necessary to know what things to avoid, but if you don't know how they are done on various machines, you won't be tempted to take advantage of a particular implementation.
+		-- K & R, 2nd Edition, ch 2, p 54
+%
