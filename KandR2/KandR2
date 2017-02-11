@@ -165,3 +165,80 @@ By definition, the numeric value of a relational or logical expression is 1 if t
 The unary negation operator ! converts a non-zero operand into 0, and a zero operand into a 1.
 		-- K & R, 2nd Edition, ch 2, p 42
 %
+When an operator has operands of different types, they are converted to a common type according to a small number of rules.  In general, the only automatic conversions are those that convert a "narrower" operand into a "wider" one without losing information, such as converting an interger to a floating point in an expression like `f + i`.  Expressions that don't make sense, like using a `float` as a subscript, are disallowed.  Expressions that might lose information, like assigning a longer integer type to a shorter, or a floating-point type to an integer, may draw a warning, but they are not illegal.
+		-- K & R, 2nd Edition, ch 2, p 42
+%
+There is one subtle point about the conversion of characters to integers.  The language does not specify whether variables of type `char` are signed or unsigned quantities.  When `char` is converted to an `int`, can it ever produce a negative number?  The answer varies from machine to machine, reflecting differences in architecture.  On some machines a `char` whose leftmost bit is 1 will be converted to a negative integer ("sign extension").  On others, a `char` is promoted to an `int` by adding zeros at the left end, and thus is always positive.
+		-- K & R, 2nd Edition, ch 2, p 43-44
+%
+The definition of C guarantees that any character in the machine's standard printing character set will never be negative, so these characters will always be positive quantities in expressions.  But arbitrary bit patterns stored in character variables may appear to be negative on some machines, yet positive on others.  For portability, specify `signed` or `unsigned` if non-character data is to be stored in `char` variables.
+		-- K & R, 2nd Edition, ch 2, p 44
+%
+Implicit arithmetic conversions work much as expected.  In general, if an operator like + or * that takes two operands (a binary operator) has operands of different types, the "lower" type is promoted to the "higher" type before the operation proceeds.  The result is of the higher type.
+		-- K & R, 2nd Edition, ch 2, p 44
+%
+Since an argument of a function call is an expression, type conversions also take place when arguments are passed to functions.  In the absence of a function prototype, `char` and `short` become `int`, and `float` becomes `double`.
+		-- K & R, 2nd Edition, ch 2, p 45
+%
+[E]xplicit type conversions can be forced ("coerced") in any expression, with a unary operator called a cast.  In the construction
+
+	(type-name) expression
+
+the expression is converted to the named type by the conversion rules[.]
+		-- K & R, 2nd Edition, ch 2, p 45
+%
+The cast operator has the same high precedence as other unary operators[.]
+		-- K & R, 2nd Edition, ch 2, p 45
+%
+If arguments are declared by a function prototype, as they normally should be, the declaration causes automatic coercion of any arguments when the function is called.  Thus, given a function prototype for `sqrt`:
+
+	double sqrt(double);
+
+the call
+
+	root2 = sqrt(2);
+
+coerces the integer 2 into the double value 2.0 without any need for a cast.
+		-- K & R, 2nd Edition, ch 2, p 45
+%
+C provides six operators for bit manipulation; these may only be applied to integral operands, that is, `char`, `short`, `int`, and `long`, whether signed or unsigned.
+		-- K & R, 2nd Edition, ch 2, p 48
+%
+The bitwise AND operator & is often used to mask off some set of bits; for example,
+
+	n = n & 0177;
+
+sets to zero all but the low-order 7 bits of n.
+The bitwise OR operator | is used to turn bits on:
+
+	x = x | SET_ON;
+
+sets to one in x the bits that are set to one in SET_ON.
+		-- K & R, 2nd Edition, ch 2, p 48
+%
+Right shifting an `unsigned` quantity always fills vacated bits with zero.  Right shifting a signed quantity will fill with sign bits ("arithmetic shift") on some machines and with 0-bits ("logical shifts") on others.
+		-- K & R, 2nd Edition, ch 2, p 49
+%
+The operator += is called an 'assignment operator.'
+		-- K & R, 2nd Edition, ch 2, p 50
+%
+	x *= y + 1
+
+means
+
+	x = x * (y + 1)
+
+rather than
+
+	x = x * y + 1
+		-- K & R, 2nd Edition, ch 2, p 50
+%
+Declaring the argument `x` to be `unsigned` ensures that when it is right-shifted, vacated bits will be filled with zeros, not sign bits, regardless of the machine the program is run on.
+		-- K & R, 2nd Edition, ch 2, p 50
+%
+[T]he expression `i += 2` is preferable to `i = i + 2`.
+		-- K & R, 2nd Edition, ch 2, p 51
+%
+[A]n assignment operator may even help a compiler to produce efficient code.
+		-- K & R, 2nd Edition, ch 2, p 51
+%
