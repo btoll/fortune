@@ -273,3 +273,93 @@ Compilers can interpret [the order in which expressions are evaluated] in differ
 The moral is that writing code that depends on order of evaluation is a bad programming practice in any language.  Naturally, it is necessary to know what things to avoid, but if you don't know how they are done on various machines, you won't be tempted to take advantage of a particular implementation.
 		-- K & R, 2nd Edition, ch 2, p 54
 %
+In C, the semicolon is a statement terminator, rather than a separator as it is in languages like Pascal.
+		-- K & R, 2nd Edition, ch 3, p 55
+%
+Braces { and } are used to group declarations and statements together into a compound statement, or block, so that they are syntactically equivalent to a single statement.
+		-- K & R, 2nd Edition, ch 3, p 55
+%
+[I]t's a good idea to use braces when there are nested `if`s.
+		-- K & R, 2nd Edition, ch 3, p 56
+%
+`break` and `return` are the most common ways to leave a `switch`.  A `break` statement can also be used to force and immediate exit from `while`, `for`, and `do` loops[.]
+		-- K & R, 2nd Edition, ch 3, p 59
+%
+As a matter of good form, put a `break` after the last case [in a `switch`] even though it's logically unnecessary.  Some day when another case gets added at the end, this bit of defensive programming will save you.
+		-- K & R, 2nd Edition, ch3, p 59
+%
+The `for` statement
+
+	for (expr1; expr2; expr3)
+		statement
+
+is equivalent to
+
+	expr1;
+	while (expr2) {
+        statement
+        expr3;
+	}
+
+except for the behavior of `continue`[.]
+		-- K & R, 2nd Edition, ch 3, p 60
+%
+Grammatically, the three components of a `for` loop are expressions.  Most commonly, expr1 and expr3 are assignments or function calls and expr2 is a relational expression.  Any of the three parts [of a `for` loop] can be omitted, although the semi-colons must remain.  If expr1 or expr3 is omitted, it is simply dropped from the expansion.  If the test, expr2, is not present, it is taken as permanently true, so
+
+	for (;;) {
+        ...
+	}
+
+is an "infinite" loop, presumably to be broken by other means, such as a `break` or `return`.
+		-- K & R, 2nd Edition, ch 3, p 60
+%
+Whether to use `while` or `for` is largely a matter of personal preference...The `for` is preferable when there is a simple initialization and increment, since it keeps the loop control statments close together and visible at the top of the loop.
+		-- K & R, 2nd Edition, ch 3, p 60-61
+%
+Because the components for the `for` are arbitrary expressions, `for` loops are not restricted to arithmetic progressions.  Nonetheless, it is bad style to force unrelated computation into the initialization and increment of a `for`, which are better reserved for loop control operations.
+		K & R, 2nd Edition, ch 3, p 61
+%
+One final C operator is the comma ",", which most often finds use in the `for` statement.  A pair of expressions separated by a comma is evaluated left to right, and the type and value of the result are the type and value of the right operand.
+		-- K & R, 2nd Edition, ch 3, p 62
+%
+The commas that separate function arguments, variables in declarations, etc., are not comma operators, and do not guarantee left to right evaluation.
+		-- K & R, 2nd Edition, ch 3, p 63
+%
+Comma operators should be used sparingly.  The most suitable uses are for constructs strongly related to each other, as in the `for` loop, and in macros where a multistep computation has to be a single expression.
+		-- K & R, 2nd Edition, ch 3, p 63
+%
+[T]he third loop in C, the `do-while`, tests at the bottom after making each pass through the loop body; the body is always executed at least once.  The syntax of the `do` is
+
+    do
+        statement
+    while (expression);
+		-- K & R, 2nd Edition, ch 3, p 63
+%
+The `break` statement provides an early exit from `for`, `while`, and `do`, just as from `switch`.  A `break` causes the innermost enclosing loop or `switch` to be exited immediately.
+		-- K & R, 2nd Edition, ch 3, p 64
+%
+The `continue` statement is related to `break`, but less often used; it causes the next iteration of the enclosing `for`, `while`, or `do` loop to begin.  In the `while` and `do`, this means that the test part is executed immediately; in the `for`, control passes to the increment step.  The `continue` statement applies only to loops, not to `switch`.  A `continue` inside a `switch` inside a loop causes the next loop iteration.
+		-- K & R, 2nd Edition, ch 3, p 65
+%
+C provides the infinitely-abusable `goto` statement, and labels to branch to.  Formally, the `goto` is never necessary, and in practice it is almost always easy to write code without it.  We have not used `goto` in this book.
+Nevertheless, there are a few situations where `goto`s may find a place.  The most common is to abandon processing in some deeply nested structure, such as breaking out of two or more loops at once.  The `break` statement cannot be used directly since it only exits from the innermost loop.
+		-- K & R, 2nd Edition, ch 3, p 65
+%
+    for ( ... )
+        for ( ... ) {
+            ...
+            if (disaster)
+                goto error;
+        }
+    ...
+
+error:
+    clean up the mess
+		-- K & R, 2nd Edition, ch 3, p 66
+%
+A label has the same form as a variable name, and is followed by a colon.  It can be attached to any statement in the same function as the `goto`.  The scope of a label is the entire function.
+		-- K & R, 2nd Edition, ch 3, p 66
+%
+Code involving a `goto` can always be written without one though perhaps at the price of some repeated tests or an extra variable.  With a few exceptions, code that relies on `goto` statements is generally harder to understand and to maintain than code without `goto`s.  Although we are not dogmatic about the matter, it does seem that `goto` statements should be used rarely, if at all.
+		-- K & R, 2nd Edition, ch 3, p 66
+%
