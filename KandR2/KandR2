@@ -363,3 +363,87 @@ A label has the same form as a variable name, and is followed by a colon.  It ca
 Code involving a `goto` can always be written without one though perhaps at the price of some repeated tests or an extra variable.  With a few exceptions, code that relies on `goto` statements is generally harder to understand and to maintain than code without `goto`s.  Although we are not dogmatic about the matter, it does seem that `goto` statements should be used rarely, if at all.
 		-- K & R, 2nd Edition, ch 3, p 66
 %
+Function declaration and definition is the area where the ANSI standard has made the most visible changes to C...The syntax of function definition also changes, so that declarations and defintions match.  This makes it possible for a compiler to detect many more errors than it could before.  Furthermore, when arguments are properly declared, appropriate type coercions, are performed automatically.
+		-- K & R, 2nd Edition, ch 4, p 67
+%
+Each function definition has the form
+
+    return-type function-name(argument declarations)
+    {
+        declarations and statements
+    }
+
+Various parts may be absent; a minimal function is
+
+    dummy() {}
+
+which does nothing and returns nothing.  A do-nothing function like this is sometimes useful as a place holder during program development.  If the return type is omitted, `int` is assumed.
+		-- K & R, 2nd Edition, ch 4, p 69-70
+%
+The `return` statement is the mechanism for returning a value from the called function to its caller.  Any expression can follow `return`:
+
+    return expression;
+
+The expression will be converted to the return type of the function if necessary.  Parentheses are often used around the expression, but they are optional.
+		-- K & R, 2nd Edition, ch 4, p 70
+%
+The calling function is free to ignore the returned value.  Furthermore, there need be no expression after `return`; in that case, no value is returned to the caller.  Control also returns to the caller with no value when execution "falls off the end" of the function by reaching the closing right brace.  It is not illegal, but probably a sign of trouble, if a function returns a value from one place and no value from another.  In any case, if a function fails to return a value, its "value" is certain to be garbage.
+		-- K & R, 2nd Edition, ch 4, p 70
+%
+If there is an error, say in main.c, that file can be recompiled by itself and the result loaded with the previous object files, with the command
+
+    cc main.c getline.o strindex.o
+
+The `cc` command uses the ".c" versus ".o" naming convention to distinguish source files from object files.
+		-- K & R, 2nd Edition, ch 4, p 70-71
+%
+The declaration
+
+    double sum, atof(char []);
+
+says that `sum` is a `double` variable, and that `atof` is a function that takes one `char[]` argument and returns a `double`.
+		-- K & R, 2nd Edition, ch 4, p 72
+%
+In the light of what we have said about how declarations must match definitions, this might seem surprising.  The reason a mismatch can happen is that if there is no function prototype, a function is implicitly declared by its first appearance in an expression, such as
+
+    sum += atof(line)
+
+If a name that has not been previously declared occurs in an expression and is followed by a left parenthesis, it is declared by context to be a function name, the function is assumed to return an `int`, and nothing is assumed about its arguments.  Furthermore, if a function declaration does not incluce arguments, as in
+
+    double atof();
+
+that too is taken to mean that nothing is to be assumed about the arguments of `atof`; all parameter checking is turned off.  This special meaning of the empty argument list is intended to permit older C programs to compile with new compilers.  But it's a bad idea to use it with new programs.  If the function takes arguments, declare them; if it takes no arguments, use `void`.
+		-- K & R, 2nd Edition, ch 4, p 72-73
+%
+Given `atof` properly declared, we could write `atoi` (convert a string to `int`) in terms of it:
+
+    /* atoi:  convert string s to integer using atof */
+    int atoi(char [])
+    {
+        double atof(char s[]);
+
+        return (int) atof(s);
+    }
+
+This operation does potentially discard information, however, so some compilers warn of it.  The cast states explicitly that the operation is intended, and suppresses any warning.
+		-- K & R, 2nd Edition, ch 4, p 73
+%
+A C program consists of a set of external objects, which are either variables or functions.  The adjective "external" is used in contrast to "internal," which describes the arguments and variables defined inside functions.  External variables are defined outside of any function, and are thus potentially available to many functions.  Functions themselves are always external, because C does not allow functions to be defined inside other functions.
+		-- K & R, 2nd Edition, ch 4, p 73
+%
+By default, external variables and functions have the property that all references to them by the same name, even from functions compiled separately, are references to the same thing.  (The standard calls this property external linkage)
+		-- K & R, 2nd Edition, ch 4, p 73
+%
+Because external variables are globally accessible, they provide an alternative to function arguments and return values for communicating data between functions.  Any function may access an external variable by referring to it by name, if the name has been declared somehow.
+		-- K & R, 2nd Edition, ch 4, p 74
+%
+External variables are also useful because of their greater scope and lifetime.  Automatic variables are internal to a function; they come into existence when the function is entered, and disappear when it is left.  External variables, on the other hand, are permanent, so they retain values from one function invocation to the next.
+		-- K & R, 2nd Edition, ch 4, p 74
+%
+Because + and * are commutative operators, the order in which the popped operands are combined is irrelevant, but for - and / the left and right operands must be distinguished.  In
+
+	push(pop() - pop());	/* WRONG */
+
+the order in which the two calls of `pop` are evaluated is not defined.  To guarantee the right order it is necessary to pop the first value into a temporary variable as we did in `main`.
+		-- K & R, 2nd Edition, ch 4, p 77
+%
