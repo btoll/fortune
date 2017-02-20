@@ -1,0 +1,22 @@
+There is a fundamental difference between algorithms, which always produce a correct result, and heuristics, which may usually do a good job but withouth providing any guarantee.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 1, p 9
+%
+Reasonable-looking algorithms can easily be incorrect.  Algorithm correctness is a property that must be carefully demonstrated.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 1, p 11
+%
+The heart of any algorithm is an idea.  If your idea is not clearly revealed when you express an algorithm, then you are using too low-level a notation to describe it.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 1, p 12
+%
+An important and honorable technique in algorithm design is to narrow the set of allowable instances until there is a correct and efficient algorithm.  For example, we can restrict a graph problem from general graphs down to trees, or a geometric problem from two dimensions down to one.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 1, p 13
+%
+Searching for counterexamples is the best way to disprove the correctness of a heuristic.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 1, p 14
+%
+Mathematical induction is usually the right way to verify the correctness of a recursive or incremental insertion algorithm.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 1, p 16
+%
+Modeling your application in terms of well-defined structures and algorithms is the most important single step towards a solution.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 1, p 21
+%
+
