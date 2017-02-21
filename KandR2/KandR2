@@ -447,3 +447,79 @@ Because + and * are commutative operators, the order in which the popped operand
 the order in which the two calls of `pop` are evaluated is not defined.  To guarantee the right order it is necessary to pop the first value into a temporary variable as we did in `main`.
 		-- K & R, 2nd Edition, ch 4, p 77
 %
+The scope of a name is the part of the program within which the name can be used.  For an automatic variable declared at the beginning of a function, the scope is the function in which the name is declared.
+		-- K & R, 2nd Edition, ch 4, p 80
+%
+The scope of an external variable or a function lasts from the point at which it is declared to the end of the file being compiled.
+		-- K & R, 2nd Edition, ch 4, p 80
+%
+[I]f an external variable is to be referred to before it is defined, or if it is defined in a different source file from the one where it is being used, then an `extern` declaration is mandatory.
+		-- K & R, 2nd Edition, ch 4, p 80
+%
+It is important to distinguish between the declaration of an external variable and its definition.  A declaration announces the properties of a variable (primarily its type); a definition also causes storage to be set aside.
+		-- K & R, 2nd Edition, ch 4, p 80
+%
+There must be only one definition of an external variable among all the files that make up the source program; other files may contain `extern` declarations to access it.  (There may also be `extern` declarations in the file containing the definition.)  Array sizes must be specified with the definition, but are optional with an `extern` declaration.
+		-- K & R, 2nd Edition, ch 4, p 81
+%
+There is a tradeoff between the desire that each file have access only to the information it needs for its job and the practical reality that it is harder to maintain more header files.  Up to some moderate program size, it is probably best to have one header file that contains everything that is to be shared between any two parts of the program; that is the decision we made here.  For a much larger program, more organization and more headers would be needed.
+		-- K & R, 2nd Edition, ch 4, p 82
+%
+The `static` declaration, applied to an external variable or function, limits the scope of that object to the rest of the source file being compiled.
+		-- K & R, 2nd Edition, ch 4, p 83
+%
+The external `static` declaration is most often used for variables, but it can be applied to functions as well.  Normally, function names are global, visible to any part of the entire program.  If a function is declared `static`, however, its name is invisible outside of the file in which it is declared.
+		-- K & R, 2nd Edition, ch 4, p 83
+%
+The `static` declaration can also be applied to internal variables.  Internal `static` variables are local to a particular function just as automatic variables are, but unlike automatics, they remain in existence rather than coming and going each time the function is activated.  This means that internal `static` variables provide private, permanent storage within a single function.
+		-- K & R, 2nd Edition, ch 4, p 83
+%
+A `register` declaration advises the compiler that the variable in question will be heavily used.  The idea is that `register` variables are to be placed in machine registers, which may result in smaller and faster programs.  But compilers are free to ignore the advice.
+		-- K & R, 2nd Edition, ch 4, p 83
+%
+The `register` declaration looks like
+
+    register int x;
+    register char c;
+
+and so on.  The `register` declaration can only be applied to automatic variables and to the formal parameters of a function.  In this latter case, it looks like
+
+    f(register unsigned m, register long n)
+    {
+        register int i;
+        ...
+    }
+		-- K & R, 2nd Edition, ch 4, p 83-84
+%
+In practice, there are restrictions on register variables, reflecting the realities of underlying hardware.  Only a few variables in each function may be kept in registers, and only certain types are allowed.  Excess register declarations are harmless, however, since the word `register` is ignored for excess or disallowed declarations.  And it is not possible to take the address of a register variable, regardless of whether the variable is actually placed in a register.  The specific restrictions on number and types of register variables vary from machine to machine.
+		-- K & R, 2nd Edition, ch 4, p 84
+%
+An automatic variable declared and initialized in a block is initialized each time the block is entered.  A `static` variable is initialized only the first time the block is entered.
+		-- K & R, 2nd Edition, ch 4, p 84
+%
+As a matter of style, it's best to avoid variable names that conceal names in an outer scope; the potential for confusion and error is too great.
+		-- K & R, 2nd Edition, ch 4, p 85
+%
+In the absence of explicit initialization, external and static variables are guaranteed to be initialized to zero; automatic and register variables have undefined (i.e., garbage) initial values.
+		-- K & R, 2nd Edition, ch 4, p 85
+%
+For automatic and register variables, the initializer is not restricted to being a constant:  it may be any expression involving previously defined values, even function calls.
+		-- K & R, 2nd Edition, ch 4, p 85
+%
+In effect, initializations of automatic variables are just shorthand for assignment statements.  Which form to prefer is largely a matter of taste.  We have generally used explicit assignments, because initializers in declarations are harder to see and further away from the point of use.
+		-- K & R, 2nd Edition, ch 4, p 86
+%
+If there are fewer initializers for an array than the number specified, the missing elements will be zero for external, static, and automatic variables.  It is an error to have too many initializers.  There is no way to specify repetition of an initializer, nor to initialize an element in the middle of an array without supplying all the preceding values as well.
+		-- K & R, 2nd Edition, ch 4, p 86
+%
+Character arrays are a special case of initialization; a string may be used instead of the braces and commas notation:
+
+    char pattern[] = "ould";
+
+is a shorthand for the longer but equivalent
+
+    char pattern[] = { 'o', 'u', 'l', 'd', '\0' };
+
+In this case, the array size is five (four characters plus the terminating '\0').
+		-- K & R, 2nd Edition, ch 4, p 86
+%
