@@ -19,4 +19,18 @@ Mathematical induction is usually the right way to verify the correctness of a r
 Modeling your application in terms of well-defined structures and algorithms is the most important single step towards a solution.
 		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 1, p 21
 %
-
+Algorithms can be understood and studied in a language- and machine-independent manner.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 2, p 33
+%
+The Big Oh notation and worst-case analysis are tools that greatly simplify our ability to compare the efficiency of algorithms.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 2, p 35
+%
+Although esoteric functions arise in advanced algorithm analysis, a small variety of time complexities suffice and account for most algorithms that are widely used in practice.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 2, p 40
+%
+Logarithms arise whenever things are repeatedly halved or doubled.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 2, p 50
+%
+Dynamic memory allocation provides us with flexibility on how and where we use our limited storage resources.
+		-- Steven S. Skiena, The Algorithm Design Manual, 2nd Edition, ch 3, p 71
+%

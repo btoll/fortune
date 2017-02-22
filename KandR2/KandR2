@@ -523,3 +523,49 @@ is a shorthand for the longer but equivalent
 In this case, the array size is five (four characters plus the terminating '\0').
 		-- K & R, 2nd Edition, ch 4, p 86
 %
+When a function calls itself recursively, each invocation gets a fresh set of all the automatic variables, independent of the previous set.
+		-- K & R, 2nd Edition, ch 4, p 87
+%
+Recursion may provide no saving in storage, since somewhere a stack of the values being processed must be maintained.  Nor will it be faster.  But recursive code is more compact, and often much easier to write and understand than the non-recursive equivalent.  Recursion is especially convenient for recursively defined data structures like trees[.]
+		-- K & R, 2nd Edition, ch 4, p 88
+%
+C provides certain language facilities by means of a preprocessor, which is conceptually a separate first step in compilation.  The two most frequently used features are `#include`, to include the contents of a file during compilation, and `#define`, to replace a token by an arbitrary sequence of characters.
+		-- K & R, 2nd Edition, ch 4, p 88
+%
+If the filename is quoted, searching for the file typically begins where the source program was found; if it is not found there, or if the name is enclosed in < and >, searching follows an implementation-defined rule to find the file.
+		-- K & R, 2nd Edition, ch 4, p 88
+%
+`#include` is the preferred way to tie the declarations together for a large program.  It guarantees that all the source files will be supplied with the same definitions and variable declarations, and thus eliminates a particularly nasty kind of bug.  Naturally, when an included file is changed, all files that depend on it must be recompiled.
+		-- K & R, 2nd Edition, ch 4, p 89
+%
+The scope of a name defined with `#define` is from its point of definition to the end of the source file being compiled.
+		-- K & R, 2nd Edition, ch 4, p 89
+%
+Any name may be defined with any replacement text.  For example,
+
+    #define forever for (;;)    /* infinite loop */
+
+defines a new word, `forever`, for an infinite loop.
+		-- K & R, 2nd Edition, ch 4, p 89
+%
+It is also possible to define macros with arguments, so the replacement text can be different for different calls of the macro.  As an example, define a macro called `max`:
+
+    #define max(A, B)   ((A) > (B) ? (A) : (B))
+
+Although it looks like a function call, a use of `max` expands into in-line code.  Each occurrence of an formal character (here `A` or `B`) will be replaced by the corresponding actual argument.  Thus the line
+
+    x = max(p+q, r+s);
+
+will be replaced by the line
+
+    x = ((p+q) > (r+s) ? (p+q) : (r+s));
+
+So long as the arguments are treated consistently, this macro will serve for any data type; there is no need for different kinds of `max` for different data types, as there would be with functions.
+		-- K & R, 2nd Edition, ch 4, p 89-90
+%
+Names may be undefined with `#undef`, usually to ensure that a routine is really a function, not a macro[.]
+		-- K & R, 2nd Edition, ch 4, p 90
+%
+The preprocessor operator ## provides a way to concatenate actual arguments during macro expansion.  If a parameter in the replacement text is adjacent to a ##, the parameter is replaced by the actual argument, the ## and surrounding whitespace are removed, and the result is re-scanned.
+		-- K & R, 2nd Edition, ch 4, p 90
+%
