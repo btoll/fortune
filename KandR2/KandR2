@@ -569,3 +569,54 @@ Names may be undefined with `#undef`, usually to ensure that a routine is really
 The preprocessor operator ## provides a way to concatenate actual arguments during macro expansion.  If a parameter in the replacement text is adjacent to a ##, the parameter is replaced by the actual argument, the ## and surrounding whitespace are removed, and the result is re-scanned.
 		-- K & R, 2nd Edition, ch 4, p 90
 %
+It is possible to control preprocessing itself with conditional statements that are evaluated during preprocessing.  This provides a way to include code selectively, depending on the value of conditions evaluated during compilation.
+		-- K & R, 2nd Edition, ch 4, p 91
+%
+A pointer is a variable that contains the address of a variable.
+		-- K & R, 2nd Edition, ch 5, p 93
+%
+[T]he type `void *` (pointer to `void`) replaces `char *` as the proper type for a generic pointer.
+		-- K & R, 2nd Edition, ch 5, p 93
+%
+The unary operator `&` gives the address of an object, so the statement
+
+    p = &c;
+
+assigns the address of `c` to the variable `p`, and `p` is said to "point to" `c`.  The & operator only applies to objects in memory: variables and array elements.  It cannot be applied to expressions, constants, or `register` variables.
+		-- K & R, 2nd Edition, ch 5, p 93-94
+%
+The unary operator `*` is the indirection or dereferencing operator; when applied to a pointer, it accesses the object the pointer points to.
+		-- K & R, 2nd Edition, ch 5, p 94
+%
+You should also note the implication that a pointer is constrained to point to a particular kind of object: every pointer points to a specific data type.  (There is one exception: a "pointer to void" is used to hold any type of pointer but cannot be dereferenced itself.)
+		-- K & R, 2nd Edition, ch 5, p 94
+%
+The unary operators * and & bind more tightly than arithmetic operators, so the assignment
+
+    y = *ip + 1
+
+takes whatever `ip` points at, adds 1, and assigns the result to `y`, while
+
+    *ip += 1
+
+increments what `ip` points to, as do
+
+    ++*ip
+
+and
+
+    (*ip)++
+
+The parentheses are necessary in this last example; without them, the expression would increment`ip` instead of what it points to, because unary operators like * and ++ associate right to left.
+		-- K & R, 2nd Edition, ch 5, p 94-95
+%
+Since C passes arguments to functions by value, there is no direct way for the called function to alter a variable in the calling function...[t]he way to obtain the desired effect is for the calling program to pass pointers to the values to be changed:
+
+    swap(&a, &b)
+
+Since the operator & produces the address of a variable, `&a` is a pointer to `a`.  In `swap` itself, the parameters are declared to be pointers, and the operands are accessed indirectly through them.
+		-- K & R, 2nd Edition, ch 5, p 95
+%
+In C, there is a strong relationship between pointers and arrays, strong enough that pointers and arrays should be discussed simultaneously.  Any operation that can be achieved by array subscripting can also be done with pointers.  The pointer version will in general be faster but, at least to the uninitiated, somewhat harder to understand.
+		-- K & R, 2nd Edition, ch 5, p 97
+%
