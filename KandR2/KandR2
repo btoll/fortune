@@ -620,3 +620,55 @@ Since the operator & produces the address of a variable, `&a` is a pointer to `a
 In C, there is a strong relationship between pointers and arrays, strong enough that pointers and arrays should be discussed simultaneously.  Any operation that can be achieved by array subscripting can also be done with pointers.  The pointer version will in general be faster but, at least to the uninitiated, somewhat harder to understand.
 		-- K & R, 2nd Edition, ch 5, p 97
 %
+The correspondence between indexing and pointer arithmetic is very close.  By definition, the value of a variable or expression of type array is the address of element zero of the array.  Thus after the assignment
+
+    pa = &a[0];
+
+`pa` and `a` have identical values.  Since the name of an array is a synonym for the location of the initial element, the assignment `pa=&a[0]` can also be written as
+
+    pa = a;
+		-- K & R, 2nd Edition, ch 5, p 99
+%
+Rather more surprising, at least at first sight, is the fact that a reference to `a[i]` can also be written as `*(a+i)`.  In evaluating `a[i]`, C converts it to `*(a+i)` immediately; the two forms are equivalent.  Applying the operator & to both parts of this equivalence, it follows that `&a[i]` and `a+i` are also identical: `a+i` is the address of the i-th element beyond `a`.  As the other side of this coin, if `pa` is a pointer, expressions may use it with a subscript; `pa[i]` is identical to `*(pa+i)`.  In short, and array-and-index expression is equivalent to one written as a pointer and offset.
+		-- K & R, 2nd Edition, ch 5, p 99
+%
+There is one difference between an array name and a pointer that must be kept in mind.  A pointer is a variable, so `pa=a` and `pa++` are legal.  But an array name is not a variable; constructions like `a=pa` and `a++` are illegal.
+		-- K & R, 2nd Edition, ch 5, p 99
+%
+As formal parameters in a function definition,
+
+    char s[];
+
+and
+
+    char *s;
+
+are equivalent; we prefer the latter because it says more explicitly that the parameter is a pointer.  When an array name is passed to a function, the function can at its convenience believe that it has been handed either an array or a pointer, and manipulate it accordingly.  It can even use both notations if it seems appropriate and clear.
+		-- K & R, 2nd Edition, ch 5, p 99-100
+%
+If one is sure that the elements exist, it is also possible to index backwards in an array; `p[-1]`, `p[-2]`, and so on are syntactically legal, and refer to the elements that immediately precede `p[0]`.  Of course, it is illegal to refer to objects that are not within the array bounds.
+		-- K & R, 2nd Edition, ch 5, p 100
+%
+If `p` is a pointer to some element of an array, then `p++` increments `p` to point to the next element, and `p+=i` increments it to point to `i` elements beyond where it currently does.  These and similar constructions are the simplest forms of pointer or address arithmetic.
+		-- K & R, 2nd Edition, ch 5, p 100
+%
+C is consistent and regular in its approach to address arithmetic; its integration of pointers, arrays, and address arithmetic is one of the strengths of the language.
+		-- K & R, 2nd Edition, ch 5, p 100
+%
+In general a pointer can be initialized just as any other variable can, though normally the only meaningful values are zero or an expression involving the addresses of previously defined data of appropriate type.  The declaration
+
+    static char *allocp = allocbuf;
+
+defines `allocp` to be a character pointer and initializes it to point to the beginning of `allocbuf`, which is the next free position when the program starts.  This could have been written
+
+    static char *allocp = &allocbuf[0];
+
+since the array name is the address of the zeroth element.
+		-- K & R, 2nd Edition, ch 5, p 102
+%
+C guarantees that zero is never a valid address for data, so a return value of zero can be used to signal an abnormal event[.]
+		-- K & R, 2nd Edition, ch 5, p 102
+%
+Pointers and integers are not interchangeable.  Zero is the sole exception; the constant zero may be assigned to a pointer, and a pointer may be compared with the constant zero.  The symbolic constant NULL is often used in place of zero, as a mnemonic to indicate more clearly that this is a special value for a pointer.
+		-- K & R, 2nd Edition, ch 5, p 102
+%
