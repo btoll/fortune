@@ -672,3 +672,20 @@ C guarantees that zero is never a valid address for data, so a return value of z
 Pointers and integers are not interchangeable.  Zero is the sole exception; the constant zero may be assigned to a pointer, and a pointer may be compared with the constant zero.  The symbolic constant NULL is often used in place of zero, as a mnemonic to indicate more clearly that this is a special value for a pointer.
 		-- K & R, 2nd Edition, ch 5, p 102
 %
+[P]ointers may be compared under certain conditions.  If p and q point to members of the same array, then relations like ==, !=, <, >=, etc., work properly.  For example,
+
+    p < q
+
+is true if p points to an earlier member of the array than q does.  Any pointer can be meaningfully compared for equality or inequality with zero.  But the behavior is undefined for arithmetic or comparisons with pointers that do not point to members of the same array.  (There is one exception: the address of the first element past the end of an array can be used in pointer arithmetic.)
+		-- K & R, 2nd Edition, ch 5, p 102-103
+%
+[W]e have already observed that a pointer and an integer may be added or subtracted.  The construction
+
+    p + n
+
+means the address of the n-th object p points to; n is scaled according to the size of the objects p points to, which is determined by the declaration of p.  If an `int` is four bytes, for example, the `int` will be scaled by four.
+		-- K & R, 2nd Edition, ch 5, p 103
+%
+The valid pointer operations are assignment of pointers of the same type, adding or subtracting a pointer and an integer, subtracting or comparing two pointers to members of the same array, and assigning or comparing to zero.  All other pointer arithmetic is illegal.  It is not legal to add two pointers, or to mulitply or divide or shift or mask them, or to add `float` or `double` to them, or even, except for `void *`, to assign a pointer of one type to a pointer of another type without a cast.
+		-- K & R, 2nd Edition, ch 5, p 103
+%
