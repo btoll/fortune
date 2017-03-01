@@ -78,7 +78,7 @@ An integer constant like 1234 is an `int`.  A long constant is written with a te
 Floating-point constants contain a decimal point (123.4) or an exponent (1e-2) or both; their type is `double`, unless suffixed.  The suffixes `f` or `F` indicate a `float` constant; `l` or `L` indicate a `long double`.
 		-- K & R, 2nd Edition, ch2, p 37
 %
-The value of an integer can be specified in octal or hexadecimal instead of decimal.  A leading zero (0) on an integer constant means octal; a leading 0x or 0X means hexadecimal...Octal and hexadecimal constants may also be followed by `L` to make them `long` and `U` to make them unsigned (ed. note - i.e., 0XFUL).
+The value of an integer can be specified in octal or hexadecimal instead of decimal.  A leading zero (0) on an integer constant means octal; a leading 0x or 0X means hexadecimal...Octal and hexadecimal constants may also be followed by `L` to make them `long` and `U` to make them unsigned (ed. note -- i.e., 0XFUL).
 		-- K & R, 2nd Edition, ch 2, p 37
 %
 A character constant is an integer, written as one character within single quotes, such as 'x'.  The value of a character constant is the numeric value of the character in the machine's character set.  For example, in the ASCII character set the character constant '0' has the value 48, which is unrelated to the numeric value 0.
@@ -734,23 +734,174 @@ Newcomers to C are sometimes confused about the difference between a two-dimensi
     int *b[10];
 
 then a[3][4] and b[3][4] are both syntactically legal references to a single `int`.  But a is a true two-dimensional array: 200 `int`-sized locations have been set aside, and the conventional rectangular subscript calculation 20xrow+col is used to find the element a[row][col].  For b, however, the definition only allocates 10 pointers and does not initialize them; initialization must be done explicitly, either statically or with code.
-		-- K & R, 3nd Edition, ch 5, p 113
+		-- K & R, 2nd Edition, ch 5, p 113
 %
 The important advantage of the pointer array is that the rows of the array may be of different lengths.
-		-- K & R, 3nd Edition, ch 5, p 113
+		-- K & R, 2nd Edition, ch 5, p 113
 %
 [B]y far the most frequent use of arrays of pointers is to store character strings of diverse lengths[.]
-		-- K & R, 3nd Edition, ch 5, p 114
+		-- K & R, 2nd Edition, ch 5, p 114
 %
 In environments that support C, there is a way to pass command-line arguments or parameters to a program when it begins executing.  When main is called, it is called with two arguments.  The first (conventionally called `argc`, for argument count) is the number of command-line arguments the program was invoked with; the second (`argv`, for argument vector) is a pointer to an array of character strings that contain the arguments, one per string.
-		-- K & R, 3nd Edition, ch 5, p 114
+		-- K & R, 2nd Edition, ch 5, p 114
 %
 By convention, argv[0] is the name by which the program was invoked, so argc is at least 1.  If argc is 1, there are no command-line arguments after the program name.
-		-- K & R, 3nd Edition, ch 5, p 115
+		-- K & R, 2nd Edition, ch 5, p 115
 %
 The first optional argument is argv[1] and the last is argv[argc-1]; additionally, the standard requires that argv[argc] be a null pointer.
-		-- K & R, 3nd Edition, ch 5, p 115
+		-- K & R, 2nd Edition, ch 5, p 115
 %
 Notice that *++argv is a pointer to an argument string, so (*++argv)[0] is its first character.  (An alternate valid form would be **++argv.)  Because [] binds tighter than * and ++, the parentheses are necessary; without them the expression would be taken as *++(argv[0]).  In fact, that is what we used in the inner loop, where the task is to walk along a specific argument string.  In the inner loop, the expression *++argv[0] increments the pointer argv[0]!
-		-- K & R, 3nd Edition, ch 5, p 118
+		-- K & R, 2nd Edition, ch 5, p 118
+%
+In C, a function itself is not a variable, but it is possible to define pointers to functions, which can be assigned, placed in arrays, passed to functions, returned by functions, and so on.
+		-- K & R, 2nd Edition, ch 5, p 118
+%
+A sort often consists of three parts -- a comparison that determines the ordering of any pair of objects, an exchange that reverses their order, and a sorting algorithm that makes comparisons and exchanges until the objects are in order.  The sorting algorithm is independent of the comparison and exchange operations, so by passing different comparison and exchange functions to it, we can arrange to sort by different criteria.
+		-- K & R, 2nd Edition, ch 5, p 118-119
+%
+In the call to `qsort`, `strcmp` and `numcmp` are addresses of functions.  Since they are known to be functions, the & operator is not necessary, in the same way that it is not needed before an array name.
+		-- K & R, 2nd Edition, ch 5, p 119
+%
+Any pointer can be cast to `void *` and back again without loss of information[.]
+		-- K & R, 2nd Edition, ch 5, p 120
+%
+The fourth parameter of qsort is
+
+    int (*comp)(void *, void *)
+
+which says that `comp` is a pointer to a function that has two `void *` arguments and returns an `int`...The parentheses are needed so the components are correctly associated; without them,
+
+    int *comp(void *, void *)       /* WRONG */
+
+says that `comp` is a function returning a poiter to an `int`, which is very different.
+		-- K & R, 2nd Edition, ch 5, p 120
+%
+One good way to synthesize [complicated] declarations is in small steps with `typedef`[.]
+		-- K & R, 2nd Edition, ch 5, p 122
+%
+`dcl` is based on the grammar that specifies a declarator, which is spelled out precisely in Appendix A, Section 8.5; this is a simplified form:
+
+    dcl:            optional *'s direct-dcl
+    direct-dcl      name
+                    (dcl)
+                    direct-dcl()
+                    direct-dcl[optional size]
+
+In words, a dcl is a direct-dcl, perhaps preceded by *'s.  A direct-dcl is a name, or a parenthesized dcl, or a direct-dcl followed by parentheses, or a direct-dcl followed by brackets with an optional size.
+		-- K & R, 2nd Edition, ch 5, p 122-123
+%
+A structure is a collection of one or more variables, possibly of different types, grouped together under a single name for convenient handling.  (Structures are called "records" in some languages, notably Pascal.)  Structures help to organize complicated data, particularly in large programs, because they permit a group of related variables to be treated as a unit instead of as separate entities.
+		-- K & R, 2nd Edition, ch 6, p 127
+%
+The main change made by the ANSI standard is to define structure assignment -- structures may be copied and assigned to, passed to functions, and returned by functions.  This has been supported by most compilers for many years, but the properties are now precisely defined.  Automatic structures and arrays may now also be initialized.
+		-- K & R, 2nd Edition, ch 6, p 127
+%
+The keyword `struct` introduces a structure declaration, which is a list of declarations enclosed in braces.  An optional name called a structure tag may follow the word `struct`.  The tag names this kind of structure, and can be used subsequently as a shorthand for the part of the declaration in braces.
+		-- K & R, 2nd Edition, ch 6, p 128
+%
+The variables named in a structure are called members.  A structure member or tag and an ordinary (i.e., non-member) variable can have the same name without conflict, since they can always be distinguished by context.  Furthermore, the same member names may occur in different structures, although as a matter of style one would normally use the same names only for closely related objects.
+		-- K & R, 2nd Edition, ch 6, p 128
+%
+A `struct` declaration defines a type.  The right brace that terminates the list of members may be followed by a list of variables, just as for any basic type.  That is,
+
+    struct { ... } x, y, z;
+
+is syntactically analogous to
+
+    int x, y, z;
+
+in the sense that each statement declares x, y and z to be variables of the named type and causes space to be set aside for them.
+		-- K & R, 2nd Edition, ch 6, p 128
+%
+A structure declaration that is not followed by a list of variables reserves no storage; it merely describes a template or the shape of a structure.  If the declaration is tagged, however, the tag can be used later in definitions of instances of the structure.
+		-- K & R, 2nd Edition, ch 6, p 128
+%
+A structure can be initialized by following its definition with a list of initializers, each a constant expression, for the members:
+
+    struct point maxpt = { 320, 200 };
+
+An automatic structure may also be initialized or by assignment or by calling a function that returns a structure of the right type.
+		-- K & R, 2nd Edition, ch 6, p 128
+%
+The only legal operations on a structure are copying it or assigning to it as a unit, taking its address as &, and accessing its members.  Copy and assignment include passing arguments to functions and returning values from functions as well.  Structures may not be compared.  A structure may be initialized by a list of constant member values; an automatic structure may also be initialized by an assignment.
+		-- K & R, 2nd Edition, ch 6, p 129
+%
+[S]tructure parameters are passed by value like any others.
+		-- K & R, 2nd Edition, ch 6, p 130
+%
+If a large structure is to be passed to a function, it is generally more efficient to pass a pointer than to copy the whole structure.  Structure pointers are just like pointers to ordinary variables.  The declaration
+
+    struct point *pp;
+
+    says that `pp` is a pointer to a structure of type `struct point`.  If `pp` points to a `point` structure, `*pp` is the structure, and `(*pp).x` and `(*pp).y` are the members.  To use `pp`, we might write, for example,
+
+    struct point origin, *pp;
+    pp = &origin;
+    printf("origin is (%d,%d)\n", (*pp).x, (*pp).y);
+
+The parentheses are necessary in `(*pp).x` because the precedence of the structure operator . is higher than *.  The expression `*pp.x` means `*(pp.x)`, which is illegal here because `x` is not a pointer.
+		-- K & R, 2nd Edition, ch 6, p 131
+%
+Pointers to structures are so frequently used that an alternative notation is provided as a shorthand.  If `p` is a pointer to a structure, then
+
+    p->member-of-structure
+
+refers to the particular member.
+		-- K & R, 2nd Edition, ch 6, p 131
+%
+Both . and -> associate from left to right, so if we have
+
+    struct rect r, *rp = &r;
+
+then these four expressions are equivalent:
+
+    r.pt1.x
+    rp->pt1.x
+    (r.pt1).x
+    (rp->pt1).x
+		-- K & R, 2nd Edition, ch 6, p 131
+%
+The structure operators . and ->, together with () for function calls and [] for subscripts, are at the top of the precedence hierarchy and thus bind very tightly.
+		-- K & R, 2nd Edition, ch 6, p 132
+%
+[G]iven the declaration
+
+    struct {
+        int len;
+        char *str;
+    } *p;
+
+then
+
+    ++p->len
+
+increments `len`, not `p`, because the implied parenthesization is `++(p->len)`.  Parentheses can be used to alter the binding:  `(++p)->len` increments `p` before accessing `len`, and `(p++)->len` increments `p` afterward.  (This last set of parentheses is unnecessary.)
+In the same way, `*p->str` fetches whatever `str` points to; `*p->str++` increments `str` after accessing whatever it points to (just like `*s++`); `(*p->str)++` increments whatever `str` points to; and `*p++->str` increments `p` after accessing whatver `str` points to.
+		-- K & R, 2nd Edition, ch 6, p 132
+%
+Since the structure `keytab` contains a constant set of names, it is easiest to make it an external variable and initialize it once and for all when it is defined.  The structure initialization is analagous to earlier ones -- the definition is followed by a list of initializers enclosed in braces:
+
+    struct key {
+        char *word;
+        int count;
+    } keytab[]= {
+        "auto", 0,
+        "break", 0,
+        "case", 0,
+        /* ... */
+        "void", 0,
+        "volatile", 0,
+        "while", 0
+    };
+
+The initializers are listed in pairs corresponding to the structure members.  It would be more precise to enclose initializers for each "row" or structure in braces, as in
+
+    { "auto", 0 },
+    { "break", 0 },
+    { "case", 0 },
+    ...
+
+but the inner braces are not necessary when the initializers are simple variables or character strings, and when all are present.  As usual, the number of entries in the array `keytab` will be computed if initializers are present and the [] is left empty.
+		-- K & R, 2nd Edition, ch 6, p 133
 %
