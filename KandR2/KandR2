@@ -905,3 +905,116 @@ The initializers are listed in pairs corresponding to the structure members.  It
 but the inner braces are not necessary when the initializers are simple variables or character strings, and when all are present.  As usual, the number of entries in the array `keytab` will be computed if initializers are present and the [] is left empty.
 		-- K & R, 2nd Edition, ch 6, p 133
 %
+A `sizeof` can not be use in a `#if` line, because the preprocessor does not parse type names.  But [an] expression in [a] `#define` is not evaluated by the preprocessor[.]
+		-- K & R, 2nd Edition, ch 6, p 135
+%
+The computation of the middle element can no longer be simply
+
+    mid = (low+high) / 2        /* WRONG */
+
+because the addition of two pointers is illegal.  Subtraction is legal, however, so `high-low` is the number of elements, and thus
+
+    mid = low + (high-low) / 2
+
+sets `mid` to point to the element halfway between `low` and `high`.
+		-- K & R, 2nd Edition, ch 6, p 138
+%
+The most important change is to adjust the algorithm to make sure that it does not generate an illegal pointer or attempt to access an element outside the array.  The problem is that `&tab[-1]` and `&tab[n]` are both outside the limits of the array `tab`.  The former is strictly illegal, and it is illegal to dereference the latter.  The language definition does guarantee, however, that pointer arithmetic that involves the first element beyond the end of an array (that is, `&tab[n]`) will work correctly.
+		-- K & R, 2nd Edition, ch 6, p 138
+%
+Don't assume, however, that the size of a structure is the sum of the sizes of its members.  Because of alignment requirements for different objects, there may be unnamed "holes" in a structure.  Thus, for instance, if a `char` is one bye and an `int` four bytes, the structure
+
+    struct {
+        char c;
+        int ;
+    };
+
+might well require eight bytes, not five.  The `sizeof` operator returns the proper value.
+		-- K & R, 2nd Edition, ch 6, p 138
+%
+[W]hen a function returns a complicated type like a structure pointer, as in
+
+    struct key *binsearch(char *word, struct key *tab, int n)
+
+the function name can be hard to see, and to find with a text editor.  Accordingly an alternate style is sometimes used:
+
+    struct key *
+    binsearch(char *word, struct key *tab, int n)
+
+This is a matter of personal taste; pick the form you like and hold to it.
+		-- K & R, 2nd Edition, ch 6, p 138
+%
+It is illegal for a structure to contain an instance of itself[.]
+		-- K & R, 2nd Edition, ch 6, p 140
+%
+Alignment requirements can generally be satisfied easily, at the cost of some wasted space, by ensuring that the allocator always returns a pointer that meets all alignment restrictions.
+		-- K & R, 2nd Edition, ch 6, p 142
+%
+The question of the type declaration for a function like `malloc` is a vexing one for any language that takes its type-checking seriously.  In C, the proper method is to declare that `malloc` returns a pointer to `void`, then explicitly coerce the pointer into the desired type with a cast.  Thus `talloc` can be written as
+
+    #include <stdlib.h>
+
+    /* talloc:  make a tnode */
+    struct tnode *talloc(void)
+    {
+        return (struct tnode *) malloc(sizeof(struct tnode));
+    }
+		-- K & R, 2nd Edition, ch 6, p 142
+%
+The `for` loop in `lookup` is the standard idiom for walking along a linked list:
+
+    for (ptr = head; ptr != NULL; ptr = ptr->next)
+        ...
+		-- K & R, 2nd Edition, ch 6, p 145
+%
+C provides a facility called `typedef` for creating new data type names.  For example, the declaration
+
+    typedef int Length;
+
+makes the name `Length` a synonym for `int`.  Type `Length` can be used in declarations, casts, etc., in exactly the same ways that the type `int` can be:
+
+    Length  len, maxlen;
+    Length  *lengths[];
+		-- K & R, 2nd Edition, ch 6, p 145
+%
+Notice that the type being declared in a `typedef` appears in the position of a variable name, not right after the word `typedef`.  Syntactically, `typedef` is like the storage classes `extern`, `static`, etc.  We have used capitalized names for `typedef`s, to make them stand out.
+		-- K & R, 2nd Edition, ch 6, p 146
+%
+It must be emphasized that a `typedef` declaration does not create a new type in any sense; it merely adds a new name for some existing type.  Nor are there any new semantics; variables declared this way have exactly the same properties as variables whose declarations are spelled out explicitly.  In effect, `typedef` is like `#define`, except that since it is interpreted by the compiler, it can cope with textual substitutions that are beyond the capabilities of the preprocessor.
+		-- K & R, 2nd Edition, ch 6, p 146-147
+%
+Besides purely aesthetic issues, there are two main reasons for using `typedefs`.  The first is to parameterize a program against portability problems.  If `typedef`s are used for data types that may be machine-dependent, only the `typedef`s need change when the program is moved.  One common situation is to use `typedef` names for various integer quantities, then make an appropriate set of choices of `short`, `int`, and `long` for each host machine.  Types like `size_t` and `ptrdiff_t` from the standard library are examples.
+The second purpose of `typedef`s is to provide better documentation for a program[.]
+		-- K & R, 2nd Edition, ch 6, p 147
+%
+A union is a variable that may hold (at different times) objects of different types and sizes, with the compiler keeping track of size and alignment requirements.  Unions provide a way to manipulate different kinds of data in a single area of storage without embedding any machine-dependent information in the program.  They are analagous to variant records in Pascal.
+		-- K & R, 2nd Edition, ch 6, p 147
+%
+This is the purpose of a union -- a single variable that can legitimately hold any one of several types.  The syntax is based on structures:
+
+    union u_tag {
+        int ival;
+        float fval;
+        char *sval;
+    } u;
+
+The variable `u` will be large enough to hold the largest of the three types; the specific size is implementation-dependent.
+		-- K & R, 2nd Edition, ch 6, p 147
+%
+Syntactically, members of a union are accessed as
+
+    union-name.member
+
+or
+
+    union-pointer->member
+
+just as for structures.
+		-- K & R, 2nd Edition, ch 6, p 147
+%
+In effect, a union is a structure in which all members have offset zero from the base, the structure is big enough to hold the "widest" member, and the alignment is appropriate for all of the types in the union.  The same operations are permitted on unions as on structures: assignment to or copying as a unit, taking the address, and accessing a member.
+		-- K & R, 2nd Edition, ch 6, p 147
+%
+A union may only be initialized with a value of the type of its first member[.]
+		-- K & R, 2nd Edition, ch 6, p 147
+%
