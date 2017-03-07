@@ -1084,3 +1084,179 @@ Almost everything about [bit-]fields is implementation-dependent.  Whether a fie
 Fields are assigned left to right on some machines and right to left on others.  This means that although fields are useful for maintaining internally-defined data structures, the question of which end comes first has to be carefully considered when picking apart externally-defined data; programs that depend on such things are not portable.  Fields may be declared only as `int`s; for portability, specify `signed` or `unsigned` explicitly.  They are not arrays, and they do not have addresses, so the & operator cannot be applied to them.
 		--K & R, 2nd Edition, ch 6, p 150
 %
+The ANSI standard defines these [input and output] library functions precisely, so that they can exist in compatible form on any system where C exists.  Programs that confine their systems interactions to facilities provided by the standard library can be moved from one system to another without change.
+		--K & R, 2nd Edition, ch 7, p 151
+%
+[T]he library implements a simple model of text input and output.  A text stream consists of a sequence of lines; each line ends with a newline character.  If the system doesn't operate that way, the library does whatever is necessary to make it appear as if it does.  For instance, the library might convert carriage return and line feed to newline on input and back again on output.
+		--K & R, 2nd Edition, ch 7, p 151
+%
+The symbolic constant EOF is defined in <stdio.h>.  The value is typically -1, but tests should be written in terms of EOF so as to be independent of the specific value.
+		--K & R, 2nd Edition, ch 7, p 151-152
+%
+[When redirecting standard input], the string "<infile" is not included in the command-line arguments in `argv`.
+		--K & R, 2nd Edition, ch 7, p 152
+%
+"[F]unctions" like `getchar` and `putchar` in <stdio.h> and `tolower` in <ctype.h> are often macros, thus avoiding the overhead of a function call per character.
+		--K & R, 2nd Edition, ch 7, p 153
+%
+The format string [of `printf`] contains two types of objects: ordinary characters, which are copied to the output stream, and conversion specifications, each of which causes conversion and printing of the next successive argument to `printf`.  Each conversion specification begins with a % and ends with a conversion character.  Between the % and the conversion character there may be, in order:
+
+    - A minus sign, which specifies left adjustment of the converted argument.
+    - A number that specifies the minimum field width.  The converted argument will be printed in a field at least this wide.
+      If necessary it will be padded on the left (or right, if left adjustment is called for) to make up the field width.
+    - A period, which separates the field width from the precision.
+    - A number, the precision, that specifies the maximum number of characters to be printed from a string, or the number of
+      digits after the decimal point of a floating-point value, or the minimum number of digits for an integer.
+    - An `h` if the integer is to be printed as a `short`, or `l` (letter ell) if as a `long`.
+If the character after the % is not a conversion specification, the behavior is undefined.
+		--K & R, 2nd Edition, ch 7, p 153-154
+%
+A width or precision [for `printf`] may be specified as *, in which case the value is computed by converting the next argument (which must be an `int`).  For example, to print at most `max` characters from a string `s`,
+
+    printf("%.*", max, s);
+		--K & R, 2nd Edition, ch 7, p 154
+%
+`printf` uses its first argument to decide how many arguments follow and what their types are.  It will get confused, and you will get wrong answers, if there are not enough arguments or if they are the wrong type.
+		--K & R, 2nd Edition, ch 7, p 154-155
+%
+[T]he declaration `...` means that the number and types of these arguments may vary.  The declaration `...` can only appear at the end of an argument list.
+		--K & R, 2nd Edition, ch 7, p 155
+%
+The standard header <stdarg.h> contains a set of macro definitions that define how to step through an argument list.  The implementation of this header will vary from machine to machine, but the interface it presents is uniform.
+		--K & R, 2nd Edition, ch 7, p 155
+%
+The function `scanf` is the input analog of `printf`, providing many of the same conversion facilities in the opposite direction.
+		--K & R, 2nd Edition, ch 7, p 157
+%
+The [`scanf`] format string usually contains conversion specifications, which are used to control conversion of input.  The format string may contain:
+
+    - Blanks or tabs, which are ignored.
+    - Ordinary characters (not %), which are expected to match the next non-white space character of the input stream.
+    - Conversion specifications, consisting of the character %, an optional assignment suppression character *, an
+      optional number specifying a maximum field width, an optional `h`, `l`, or `L` indicating the width of the target,
+      and a conversion character.
+		--K & R, 2nd Edition, ch 7, p 157
+%
+The conversion character [of `scanf`] indicates the interpretation of the input field.  The corresponding argument must be a pointer, as required by the call-by-value semantics of C.
+		--K & R, 2nd Edition, ch 7, p 157-158
+%
+Suppose we want to read input lines that contain dates of the form
+
+    25 Dec 1988
+
+The `scanf` statement is
+
+    int day, year;
+    char monthname[20];
+
+    scanf("%d %s %d", &day, monthname, &year);
+
+No & is used with `monthname`, since an array name is a pointer.
+		--K & R, 2nd Edition, ch 7, p 158-159
+%
+Literal characters can appear in the `scanf` format string; they must match the same characters in the input.  So we could read dates of the form mm/dd/yy with this `scanf` statement:
+
+    int day, month, year;
+
+    scanf("%d/%d/%d", &month, &day, &year);
+		--K & R, 2nd Edition, ch 7, p 159
+%
+To read input whose format is not fixed, it is often best to read a line at a time, then pick it apart with `sscanf`.
+		--K & R, 2nd Edition, ch 7, p 159
+%
+Calls to `scanf` can be mixed with calls to other input functions.  The next call to any input function will begin by reading the first character not read by `scanf`.
+		--K & R, 2nd Edition, ch 7, p 159
+%
+[T]he arguments to `scanf` and `sscanf` must be pointers.  By far the most common error is writing
+
+    scanf("%d", n);
+
+instead of
+
+    scanf("%d", &n);
+
+The error is generally not detected at compile time.
+		--K & R, 2nd Edition, ch 7, p 159
+%
+Before it can be read or written, a file has to be opened by the library function `fopen`.  `fopen` takes an external name like `x.c` or `y.c`, does some housekeeping and negotiation with the operating system (details of which needn't concern us), and returns a pointer to be used in subsequent reads or writes of the file.
+		--K & R, 2nd Edition, ch 7, p 160
+%
+This pointer, called the file pointer, points to a structure that contains information about the file, such as the location of a buffer, the current character position in the buffer, whether the file is being read or written, and whether errors or end of file has occurred.  Users don't need to know the details, because the definitions obtained from <stdio.h> include a structure declaration called `FILE`.
+		--K & R, 2nd Edition, ch 7, p 160
+%
+If a file that does not exist is opened for writing or appending, it is created if possible.  Opening an existing file for writing causes the old contents to be discarded, while opening for appending preserves them.  Trying to read a file that does not exist is an error, and there may be other causes of error as well, like to read a file when you don't have permission.  If there is any error, `fopen` will return `NULL`.
+		--K & R, 2nd Edition, ch 7, p 161
+%
+Like `getchar` and `putchar`, `getc` and `putc` may be macros instead of functions.
+		--K & R, 2nd Edition, ch 7, p 161
+%
+When a C program is started, the operating system environment is responsible for opening three files and providing file pointers for them.  These files are the standard input, the standard output, and the standard error; the corresponding file pointers are called `stdin`, `stdout`, and `stderr`, and are declared in <stdio.h>.  Normally `stdin` is connected to the keyboard and `stdout` and `stderr` are connected to the screen, but `stdin` and `stdout` may be redirected to files or pipes[.]
+		--K & R, 2nd Edition, ch 7, p 161
+%
+`getchar` and `putchar` can be defined in terms of `getc`, `putc`, `stdin`, and `stdout` as follows:
+
+    #define getchar()   getc(stdin)
+    #define putchar(c)  putc((c), stdout)
+		--K & R, 2nd Edition, ch 7, p 161
+%
+For formatted input or output of files, the functions `fscanf` and `fprintf` may be used.  These are identical to `scanf` and `printf`, except that the first argument is a file pointer that specifies the file to be read or written; the format string is the second argument.
+		--K & R, 2nd Edition, ch 7, p 161
+%
+The file pointers `stdin` and `stdout` [and `stderr`] are objects of type `FILE *`.  They are constants, however, not variables, so it is not possible to assign them.
+		--K & R, 2nd Edition, ch 7, p 162
+%
+The function
+
+    int fclose(FILE *fp)
+
+is the inverse of `fopen`; it breaks the connection between the file pointer and the external name that was established by `fopen`, freeing the file pointer for another file.  Since most operating systems have some limit on the number of files that a program may have open simultaneously, it's a good idea to free file pointers when they are no longer needed[.]  There is also another reason for `fclose` on an output file -- it flushes the buffer in which `putc` is collecting output.  `fclose` is called automatically for each open file when a program terminates normally.  (You can close `stdin` and `stdout` if they are not needed.  They can also be reassigned by the library function `freopen`.)
+		--K & R, 2nd Edition, ch 7, p 162
+%
+Output written on `stderr` normally appears on the screen even if the standard output is redirected.
+		--K & R, 2nd Edition, ch 7, p 163
+%
+The program signals errors two ways.  First, the diagnostic output produced by `fprintf` goes onto `stderr`, so it finds its way to the screen instead of disappearing down a pipeline or into an input file.  We included the program name, from `argv[0]`, in the message, so if this program is used with others, the source of an error is identified.
+Second, the program uses the standard library function `exit`, which terminates program execution when it is called.  The argument of `exit` is available to whatever process called this one, so the success or failure of the program can be tested by another program that uses this one as a sub-process.  Conventionally, a return value of 0 signals that all is well; non-zero values usually signal abnormal situations.  `exit` calls `fclose` for each open output file, to flush out any buffered output.
+		--K & R, 2nd Edition, ch 7, p 163
+%
+The function `ferror` returns non-zero if an error occurred on the stream `fp`.
+
+    int ferror(FILE *fp)
+
+Although output errors are rare, they do occur (for example, if a disk fills up), so a production program should check this as well.
+		--K & R, 2nd Edition, ch 7, p 164
+%
+The function `feof(FILE *)` is analogous to `ferror`; it returns non-zero if end of file has occurred on the specified file.
+
+    int feof(FILE *fp)
+		--K & R, 2nd Edition, ch 7, p 164
+%
+[A]ny serious program should take care to return sensible, useful status values.
+		--K & R, 2nd Edition, ch 7, p 164
+%
+    char *fgets(char *line, int maxline, FILE *fp)
+
+`fgets` reads the next input line (including the newline) from file `fp` into the character array `line`; at most `maxline`-1 characters will be read.  The resulting line is terminated with a '\0'.  Normally `fgets` returns `line`; on end of file or error it returns NULL.
+		--K & R, 2nd Edition, ch 7, p 164
+%
+The standard specifies that `ferror` returns non-zero for error; `fputs` returns EOF for error and a non-negative value otherwise.
+		--K & R, 2nd Edition, ch 7, p 165
+%
+The pointer returned by `malloc` or `calloc` has the proper alignment for the object in question, but it must be cast to the appropriate type, as in
+
+    int *ip;
+
+    ip = (int *) calloc(n, sizeof(int));
+		--K & R, 2nd Edition, ch 7, p 167
+%
+`free(p)` frees the space pointed to by `p`, where `p` was originally obtained by a call to `malloc` or `calloc`.  There are no restrictions on the order in which space is freed, but it is a ghastly error to free something not obtained by calling `calloc` or `malloc`.
+It is also an error to use something after it has been freed.
+		--K & R, 2nd Edition, ch 7, p 167
+%
+The function `rand()` computes a sequence of pseudo-random integers in the range zero to RAND_MAX, which is defined in <stdlib.h>.  One way to produce random floating-point numbers greater than or equal to zero but less than one is
+
+    #define frand() ((double) rand() / (RAND_MAX+1.0))
+
+(If your library already provides a function for floating-point random numbers, it is likely to have better statistical properties than this one.)
+		--K & R, 2nd Edition, ch 7, p 168
+%
