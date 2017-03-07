@@ -1260,3 +1260,40 @@ The function `rand()` computes a sequence of pseudo-random integers in the range
 (If your library already provides a function for floating-point random numbers, it is likely to have better statistical properties than this one.)
 		--K & R, 2nd Edition, ch 7, p 168
 %
+The UNIX operating system provides its services through a set of system calls, which are in effect functions within the operating system that may be called by user programs.
+		--K & R, 2nd Edition, ch 8, p 169
+%
+On any particular system the routines of the standard library have to be written in terms of the facilities provided by the host system.
+		--K & R, 2nd Edition, ch 8, p 169
+%
+In the UNIX operating system, all input and output is done by reading or writing files, because all peripheral devices, even keyboard and screen, are files in the file system.  This means that a single homogeneous interface handles all communication between a program and peripheral devices.
+		--K & R, 2nd Edition, ch 8, p 169
+%
+Whenever input or output is to be done on the file, the file descriptor [a small non-negative integer returned by the system when a file is opened] is used instead of the name to identify the file.  (A file descriptor is analogous to the file pointer used by the standard library, or to the file handle of MS-DOS.)  .All information about an open file is maintained by the system; the user program refers to the file only by the file descriptor.
+		--K & R, 2nd Edition, ch 8, p 170
+%
+Since input and output involving keyboard and screen is so common, special arrangements exist to make this convenient.  When the command interpreter (the "shell") runs a program, three files are open, with file descriptors 0, 1, and 2, called the standard input, the standard output, and the standard error.  If a program reads 0 and writes 1 and 2, it can do input and output without worrying about opening files.
+		--K & R, 2nd Edition, ch 8, p 170
+%
+The user of a program can redirect I/O to and from files with < and >:
+
+    prog <infile >outfile
+
+In this case, the shell changes the default assignments for file descriptors 0 and 1 to the named files.  Normally file descriptor 2 remains attached to the screen, so error messages can go there.  Similar observations hold for input or output associated with a pipe.  In all cases, the file assignments are changed by the shell, not by the program.  The program does not know where its input comes from nor where its output goes, so long as it uses file 0 for input and 1 and 2 for output.
+		--K & R, 2nd Edition, ch 8, p 170
+%
+Input and output uses the `read` and `write` system calls, which are accessed from C programs through two functions called `read` and `write`.  For both, the first argument is a file descriptor.
+		--K & R, 2nd Edition, ch 8, p 170
+%
+Any number of bytes can be read or written in one call.  The most common values are 1, which means one character at at time ("unbuffered"), and a number like 1024 or 4096 that corresponds to a physical block size on a peripheral device.  Larger sizes will be more efficient because fewer system calls will be made.
+		--K & R, 2nd Edition, ch 8, p 170-171
+%
+The standard library function `vprintf` is like `printf` except that the variable argument list is replaced by a single argument that has been initialized by calling the `va_start` macro.  Similarly, `vprintf` and `vsprintf` match `fprintf and `sprintf`.
+		--K & R, 2nd Edition, ch 8, p 174
+%
+There is a limit (often about 20) on the number of files that a program may have open simultaneously.  Accordingly, any program that intends to process many files must be prepared to re-use file descriptors.  The function `close(int fd)` breaks the connection between a file descriptor and an open file, and frees the file descriptor for use with some other file; it corresponds to `fclose` in the standard library except that there is no buffer to flush.  Termination of a program via `exit` or return from the main program closes all open files.
+		--K & R, 2nd Edition, ch 8, p 174
+%
+The function `unlink(char *name)` removes the file name from the file system.  It corresponds to the standard library function `remove`.
+		--K & R, 2nd Edition, ch 8, p 174
+%
