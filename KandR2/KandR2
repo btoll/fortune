@@ -1297,3 +1297,14 @@ There is a limit (often about 20) on the number of files that a program may have
 The function `unlink(char *name)` removes the file name from the file system.  It corresponds to the standard library function `remove`.
 		--K & R, 2nd Edition, ch 8, p 174
 %
+Input and output are normally sequential: each `read` or `write` takes place at a position in the file right after the previous one.  When necessary, however, a file can be read or written in any arbitrary order.  The system call `lseek` provides a way to move around in a file without reading or writing any data:
+
+    long lseek(int fd, long offset, int origin);
+		--K & R, 2nd Edition, ch 8, p 174-175
+%
+With `lseek`, it is possible to treat files more or less like large arrays, at the price of slower access.
+		--K & R, 2nd Edition, ch 8, p 175
+%
+The standard library function `fseek` is similar to `lseek` except that the first argument is `FILE *` and the return is non-zero if an error occurred.
+		--K & R, 2nd Edition, ch 8, p 175
+%
